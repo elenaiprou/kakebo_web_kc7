@@ -13,3 +13,5 @@ def bye():
 #crearemos variable de entorno para poder lanzar la web con los saludos. 
     #set FLASK_APP=hello.py
     #flask run
+# control + c: para cerrar
+
