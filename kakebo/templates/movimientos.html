@@ -1,0 +1,36 @@
+{% extends 'base.html' %} <!-- cargamos la plantilla base, tiene lo que todo es común-->
+
+{% block titulo%} Inicio {% endblock %} 
+
+{% block contenido %}
+<h1>Listado de movimientos <a href="/nuevo"> Crear nuevo movimiento</a></h1>
+<table>
+    <tr>
+        <th>Fecha</th>
+        <th>Concepto</th>
+        <th>Categoria</th>
+        <th>Tipo</th>
+        <th>Cantidad</th>
+        <th>Saldo</th>
+        <th></th>
+    </tr>
+    {% for movimiento in datos %}
+    <tr>
+        <td>{{ movimiento.fecha }}</td>
+        <td>{{ movimiento.concepto }}</td>
+        <td>{{ movimiento.categoria }}</td>
+        <td>{% if movimiento.esGasto == 0 %}
+                Ingreso
+            {% else %}
+                Gasto 
+            {% endif %}
+        </td>
+        <td>{{ movimiento.cantidad }} €</td>
+        <td>{{ movimiento.saldo }} €</td>
+        <td class="btn">
+            <a href="/borrar/{{ movimiento.id }}">Borrar</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

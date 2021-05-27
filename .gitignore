@@ -3,3 +3,7 @@ __pycache__/
 .env
 movimientos.db
 .vscode/
+config.__pycache__
+config.py
+movimientos.sqbpro
+views_repasar diferencias.py
