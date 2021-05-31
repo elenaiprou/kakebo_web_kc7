@@ -4,27 +4,35 @@
 
 {% block contenido %}
 <h1>Borrar movimiento</h1>
-<div class="card">
-    <div>
-        <label for="fecha"> Fecha</label>
-        <input type="text" name="fecha" value="{{ movimiento.fecha }}">
-    </div>
-    <div >
-        {{ form.concepto.label(class="mylabel") }}
-        {{ form.concepto(disabled=True) }}
-    </div>
-    <div >
-        {{ form.categoria.label(class="mylabel") }}
-        {{ form.categoria(disabled=True) }}
-    </div>
-    <div >
-        {{ form.cantidad.label(class="mylabel") }}
-        {{ form.cantidad(disabled=True) }}
-    </div>
-    <div >
-        {{ form.esGasto.label(class="mylabel") }}
-        {{ form.esGasto(disabled=True) }}
-    </div>
+<div class="row">
+    <form action="/borrar/{{ movimiento.id }}" method="post">
+
+        <div>
+            <label class=mylabel for="fecha">Fecha</label>
+            <input  disabled type="text" name="fecha" value="{{ movimiento.fecha }}">
+        </div>
+        <div >
+            <label class=mylabel for="concepto">Concepto</label>
+            <input  disabled type="text" name="concepto" value="{{ movimiento.concepto }}">
+        </div>
+        <div >
+            <label class=mylabel for="categoria">Categoria</label>
+            <input  disabled type="text" name="categoria" value="{{ movimiento.categoria }}">
+        </div>
+        <div >
+            <label class=mylabel for="cantidad">Cantidad</label>
+            <input  disabled type="text" name="cantidad" value="{{ movimiento.cantidad }}">
+        </div>
+        <div >
+            <label class=mylabel for="esGasto">Es gasto</label>
+            <input  disabled type="checkbox" name="esGasto" {% if movimiento.esGasto != 0 %} checked {% endif %}>
+        </div>
+
+        <input type="submit" value="Aceptar"> 
+        <a href="/">Cancelar</a>
+    </form>
+
 </div>
+
 
 {% endblock %}

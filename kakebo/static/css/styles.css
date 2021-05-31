@@ -19,6 +19,13 @@
 .popup p {
     font-size: 1.2em;
     text-align: center;
+}
+
+.popup p.aviso {
+    color:green;
+}
+
+.popup p.error {
     color: darkred;
 }
 

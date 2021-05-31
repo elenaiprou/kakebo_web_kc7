@@ -3,16 +3,20 @@ from kakebo import app
 from flask import jsonify, render_template, request, redirect, flash
 import sqlite3
 from kakebo.forms import MovimientosForm #importar classe de movimientos de formulario para poder cargarlo
+from datetime import date
 
 def consultaSQL(query, parametros = []):
     # Abrimos la conexion
     conexion = sqlite3.connect("movimientos.db")
     cur = conexion.cursor()
+
     # Ejecutamos la consulta
     cur.execute(query, parametros)
+
     # Obtenemos los datos de la consulta
     claves = cur.description
     filas = cur.fetchall()
+
     # Procesar los datos para devolver una lista de diccionarios. Un diccionario por fila
     resultado = []
     for fila in filas:
@@ -20,10 +24,11 @@ def consultaSQL(query, parametros = []):
         for tclave, valor in zip(claves, fila):
             d[tclave[0]] = valor
         resultado.append(d)
+
     conexion.close()
     return resultado
 
-def modificaTabletSQL(query, parametros= []):
+def modificaTablaSQL(query, parametros= []):
     conexion = sqlite3.connect("movimientos.db")
     cur = conexion.cursor()
 
@@ -48,33 +53,103 @@ def index():
 @app.route('/nuevo', methods=['GET', 'POST'])
 def nuevo():
     formulario = MovimientosForm()
-    
+
     if request.method == 'GET':
         return render_template('alta.html', form = formulario)
     else:
+
         if formulario.validate():
             query = "INSERT INTO movimientos (fecha, concepto, categoria, esGasto, cantidad) VALUES (?, ?, ?, ?, ?)"
             try:
-                modificaTabletSQL(query, [formulario.fecha.data, formulario.concepto.data, formulario.categoria.data,
+                modificaTablaSQL(query, [formulario.fecha.data, formulario.concepto.data, formulario.categoria.data,
                                 formulario.esGasto.data, formulario.cantidad.data])
-            
+
             except sqlite3.Error as el_error:
                 print("Error en SQL INSERT", el_error)
-                flash("Se ha producido un error en la base de datos. Pruebe en unos minutos")
+                flash("Se ha producido un error en la base de datos. Pruebe en unos minutos", "error")
                 return render_template('alta.html', form=formulario)
 
             return redirect(url_for("index"))
-            
+
             #Redirect a la ruta /
         else:
             return render_template('alta.html', form = formulario)
 
-@app.route('/borrar/<int:id>', methods = ['GET', 'POST'])
-def borrar(id):
-    filas = consultaSQL("SELEC * FROM movimientos WHERE id =?", [id])
-    if len(filas) == 0:
-        flash("El registro no existe")
-        return render_template('borrar.html')
-    
-    return render_template('borrar.html', movimiento = filas[0])
 
+@app.route('/borrar/<int:id>', methods=['GET', 'POST'])
+def borrar(id):
+    if request.method == 'GET':
+        filas = consultaSQL("SELECT * FROM movimientos WHERE id=?", [id])
+        if len(filas) == 0:
+            flash("El registro no existe", "error")
+            return render_template('borrar.html', )
+        
+        return render_template('borrar.html', movimiento=filas[0])
+    else:
+        try:
+            modificaTablaSQL("DELETE FROM movimientos WHERE id = ?;", [id])
+        except sqlite3.error as e:
+            flash("Se ha producido un error de base de datos, vuelva a intentarlo", 'error')
+            return redirect(url_for('index'))
+            
+        flash("Borrado realizado con éxito", 'aviso')    
+        return redirect(url_for('index'))
+        
+# @app.route('/modificar/<int:id>', methods=['GET', 'POST'])
+# def modificar(id):
+        
+#     if request.method == 'GET':
+#         filas = consultaSQL("SELECT * FROM movimientos WHERE id=?", [id])
+#         if len(filas) == 0:
+#             flash("El registro no existe", "error")
+#             return render_template('modificar.html', )
+#         registro = filas[0]
+#         registro['fecha'] = date.fromisoformat(registro['fecha'])
+
+#         formulario = MovimientosForm(data=registro)
+        
+#         return render_template('modificar.html', form=formulario)
+    
+#     else:
+#         formulario = MovimientosForm()
+
+#         if formulario.validate():
+#             query = "UPDATED movimientos SET(fecha, concepto, categoria, esGasto, cantidad) VALUES (?, ?, ?, ?, ?);", [id]
+#             try:
+#                 modificaTablaSQL(query, [formulario.fecha.data, formulario.concepto.data, formulario.categoria.data,
+#                                 formulario.esGasto.data, formulario.cantidad.data])
+
+#             except sqlite3.Error as el_error:
+#                 print("Error en SQL INSERT", el_error)
+#                 flash("Se ha producido un error en la base de datos. Pruebe en unos minutos", "error")
+#                 return render_template('modificar.html', form=formulario)
+
+#             return redirect(url_for("index"))
+
+#             #Redirect a la ruta /
+#         else:
+#             return render_template('modificar.html', form = formulario)
+
+ 
+
+
+
+
+
+
+        '''
+        filas = consultaSQL("SELECT * FROM movimientos WHERE id=?", [id])
+        
+        query = "UPDATE * FROM movimientos (fecha, concepto, categoria, esGasto, cantidad) VALUES (?, ?, ?, ?, ?) WHERE id = ?;"
+        try:
+            modificaTablaSQL(query, [filas.fecha.data, filas.concepto.data, filas.categoria.data,
+                                filas.esGasto.data, filas.cantidad.data])
+        
+        
+        except sqlite3.error as e:
+            flash("Se ha producido un error de base de datos, vuelva a intentarlo", 'error')
+            return redirect(url_for('index'))
+            
+        flash("Modificación realizado con éxito", 'aviso')    
+        return render_template('alta.html', form = filas)
+        '''

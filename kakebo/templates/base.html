@@ -12,18 +12,19 @@
         <header>
             Kakebo Web - BZ VII
         </header>
-        {% with mensaje = get_flashed_messages() %}
+        {% with mensajes = get_flashed_messages(with_categories = true) %}
             {% if mensajes %}
             <div class="popup">
-                {% for mensaje in get_flashed_messages() %}
-                    <p>{{ mensaje }}</p>
+                {% for tipo, mensaje in mensajes %}
+                <p class="{{tipo}}">{{ mensaje }}</p>
                 {% endfor %}
             </div>
-            {% endif %}
+            {% endif%}
         {% endwith %}
-        <section class = "container">
-            {% block contenido %}{% endblock%}
+    <section class="container">
+            {% block contenido %}{% endblock %}
         </section>
+    
         <footer>
             &copy; Todos los derechos reservados 2021
         </footer>
