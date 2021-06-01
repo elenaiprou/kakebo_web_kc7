@@ -4,7 +4,7 @@
 
 {% block contenido %}
 <h1>Modificar movimiento  </h1>
-<form action="modificar/{{ form.id.data }}" method="post">
+<form action="/modificar/{{ form.id.data }}" method="post">
     <fieldset class="card">
         {{ form.hidden_tag() }}
         <div>
@@ -48,7 +48,7 @@
             {{ form.esGasto() }}
         </div>
     </fieldset>
-    <input type="submit" value="Aceptar"> 
+        <input type="submit" value="Aceptar"> 
         <a href="/">Cancelar</a>
 </form>
 

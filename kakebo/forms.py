@@ -21,3 +21,11 @@ class MovimientosForm(FlaskForm):
     cantidad = FloatField("Cantidad", validators=[DataRequired()])
     esGasto = BooleanField("Es gasto")
     submit = SubmitField('Aceptar')
+
+class FiltraMovimientosForm(FlaskForm):
+    fechaDesde = DateField("Desde", validators=[fecha_hasta_hoy], default=date(1, 1, 1))
+    fechaHasta = DateField("Hasta", validators=[fecha_hasta_hoy], default=date.today())
+    texto = StringField("Concepto")
+    submit = SubmitField("Filtrar")
+
+
